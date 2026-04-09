@@ -1,24 +1,18 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function LoginScreen() {
     const router = useRouter();
-
     const [secureText, setSecureText] = useState(true);
 
     function trocarEstadoSenha() {
-        if (secureText === true) {
-            setSecureText(false);
-        }else {
-            setSecureText(true);
-        }
+        setSecureText(!secureText);
     }
 
     function logar() {
-        router.replace("/(tabs)/home")
+        router.replace("/(tabs)/home");
     }
 
     return (
@@ -27,19 +21,25 @@ export default function LoginScreen() {
             style={styles.container}
         >
             <View style={styles.innerContainer}>
-                <Ionicons 
-                    name="apps-outline" 
-                    size={64} 
-                    color={"#007AFF"}
+                
+                <Text style={styles.appTitle}>Easy-Ticket</Text>
+
+                <MaterialCommunityIcons 
+                    name="ticket-confirmation-outline" 
+                    size={80} 
+                    color={"#A2FF86"}
                     style={styles.logo} 
                 />
+
                 <Text style={styles.title}>Acesse sua conta</Text>
 
                 <Text style={styles.label}>E-mail</Text>
                 <TextInput 
                     style={styles.input}
                     placeholder="email@example.com"
+                    placeholderTextColor="#666"
                     keyboardType="email-address"
+                    autoCapitalize="none"
                 />
 
                 <Text style={styles.label}>Senha</Text>
@@ -47,7 +47,9 @@ export default function LoginScreen() {
                     <TextInput 
                         style={styles.passwordInput}
                         placeholder="*********"
-                        secureTextEntry={secureText} 
+                        placeholderTextColor="#666"
+                        secureTextEntry={secureText}
+
                     />
                     <TouchableOpacity 
                         onPress={trocarEstadoSenha}
@@ -56,7 +58,7 @@ export default function LoginScreen() {
                         <Ionicons
                             name={secureText ? "eye-off-outline" : "eye-outline"}
                             size={20}
-                            color={"#8e8e93"}
+                            color={"#A2FF86"}
                         />
                     </TouchableOpacity>
                 </View>
@@ -70,65 +72,74 @@ export default function LoginScreen() {
 
             </View>
         </KeyboardAvoidingView>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#FFF"
+        backgroundColor: "#0F111A"
     },
     innerContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        paddingHorizontal: 20,
-        paddingBottom: 40
+        paddingHorizontal: 25,
     },
-    logo: {
+    appTitle: {
+        fontSize: 32,
+        fontWeight: "900",
+        color: "#A2FF86",
+        letterSpacing: 2,
         marginBottom: 10
     },
+    logo: {
+        marginBottom: 20,
+        transform: [{ rotate: '-10deg' }]
+    },
     title: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: "bold",
-        color: "#1c1c1e",
-        marginBottom: 30 
+        color: "#FFF",
+        marginBottom: 40 
     },
     label: {
         alignSelf: "flex-start",
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#8e8e93',
-        marginBottom: 5,
+        fontSize: 12,
+        fontWeight: '700',
+        color: '#A2FF86',
+        marginBottom: 8,
+        textTransform: "uppercase"
     },
     input: {
         width: "100%",
-        height: 50,
-        borderWidth: 1,
-        borderColor: "#e5e5ea",
+        height: 55,
+        backgroundColor: "#1A1C26",
         borderRadius: 12,
         paddingHorizontal: 15,
         fontSize: 16,
-        color: "#1c1c1e",
-        backgroundColor: "#fbfbfd",
-        marginBottom: 15
+        color: "#FFF",
+        borderWidth: 1,
+        borderColor: "#333",
+        marginBottom: 20
     },
     passwordContainer: {
         flexDirection: "row",
         width: "100%",
-        height: 50,
-        borderWidth: 1,
-        borderColor: "#e5e5ea",
+        height: 55,
+        backgroundColor: "#1A1C26",
         borderRadius: 12,
-        backgroundColor: "#fbfbfd",
-        marginBottom: 10,
-        overflow: "hidden"
+        borderWidth: 1,
+        borderColor: "#333",
+        marginBottom: 25,
+        overflow: "hidden",
+        color: "#FFF"
     },
     passwordInput: {
         flex: 1,
         paddingHorizontal: 15,
         fontSize: 16,
-        color: "#1c1c1e"
+        color: "#FFF"
     },
     iconContainer: {
         justifyContent: "center",
@@ -136,16 +147,23 @@ const styles = StyleSheet.create({
     },
     button: {
         width: "100%",
-        height: 50,
+        height: 55,
+        backgroundColor: "#A2FF86",
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 10,
-        backgroundColor: "#007AFF"
+        elevation: 5,
+        shadowColor: "#A2FF86",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
     },
     buttonText: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: "#FFF"
+        fontSize: 18,
+        fontWeight: '900',
+        color: "#000",
+        textTransform: "uppercase",
+        letterSpacing: 1
     }
-})
+});

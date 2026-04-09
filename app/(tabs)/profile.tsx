@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ProfileScreen() {
@@ -12,24 +12,22 @@ export default function ProfileScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.card}>
-                <Image 
-                    source={{
-                        uri: "https://avatars.githubusercontent.com/u/177074311?v=4"
-                    }}
-                    style={styles.profileImage}
-                />
+                <View style={styles.imageBorder}>
+                    <Image 
+                        source={{
+                            uri: "https://avatars.githubusercontent.com/u/177074311?v=4"
+                        }}
+                        style={styles.profileImage}
+                    />
+                </View>
 
                 <Text style={styles.textName}>Gabriel Friedrichsen</Text>
-
-                <Text style={styles.textBio}>
-                    Eu gosto de react native
-                </Text>
 
                 <TouchableOpacity 
                     style={styles.botaoSair}
                     onPress={onSairPress}
                 >
-                    <Text>Sair</Text>
+                    <Text style={styles.textBtnSair}>SAIR DA CONTA</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -39,51 +37,60 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f0f0f0",
+        backgroundColor: "#0F111A", 
         justifyContent: "center",
         alignItems: "center",
         padding: 20
     },
-    botaoSair: {
-        marginTop: 20,
-        backgroundColor: "#FF5A5F",
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        borderRadius: 25,
-        alignItems: "center"
+    card: {
+        backgroundColor: "#1A1C26", 
+        padding: 30,
+        borderRadius: 20,
+        alignItems: "center",
+        width: "100%",
+        maxWidth: 300,
+        borderWidth: 1,
+        borderColor: "#333", 
+    },
+    imageBorder: {
+        padding: 4,
+        borderRadius: 65,
+        borderWidth: 2,
+        borderColor: "#A2FF86", 
+        marginBottom: 15
     },
     profileImage: {
         width: 120,
         height: 120,
         borderRadius: 60,
-        marginBottom: 10
-    },
-    card: {
-        backgroundColor: "#FFFFFF",
-        padding: 30,
-        borderRadius: 15,
-        alignItems: "center",
-
-        //Sombras
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 5,
-
-        width: "100%",
-        maxWidth: 250
     },
     textName: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: "bold",
-        color: "#333",
-        marginBottom: 10
+        color: "#A2FF86", 
+        marginBottom: 10,
+        textAlign: "center"
     },
     textBio: {
-        fontSize: 16,
+        fontSize: 14,
         textAlign: "center",
-        color: "#666",
-        lineHeight: 22
+        color: "#A0A0A0", 
+        lineHeight: 20,
+        marginBottom: 10
+    },
+    botaoSair: {
+        marginTop: 20,
+        backgroundColor: "#A2FF86",
+        paddingVertical: 14,
+        paddingHorizontal: 40,
+        borderRadius: 12,
+        alignItems: "center",
+        width: "100%"
+    },
+    textBtnSair: {
+        color: "#000",
+        fontWeight: "900",
+        fontSize: 14,
+        letterSpacing: 1
     }
 });

@@ -1,34 +1,29 @@
-import { useRouter } from "expo-router";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from 'expo-router';
-import { DADOS_EVENTOS } from "../mocks/event";
 import { Feather, FontAwesome } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEventos } from "../context/eventContext";
 
 export default function DetalhesScrenn() {
     const { id } = useLocalSearchParams();
-    const eventoOriginal = DADOS_EVENTOS.find((item) => item.id === id);
-
-    const [evento, setEvento] = useState(eventoOriginal);
-
     const router = useRouter();
+    const { eventos, adicionarAoCarrinho, carrinho } = useEventos();
 
-    function garantirIngresso() {
-        if (evento) {
-            setEvento({ ...evento, status: 'comprado' });
-        }
-    }
+    const evento = eventos.find((item) => item.id === String(id));
 
-    function adicionarAoCarrinho() {
-        if (evento) {
-            setEvento({ ...evento, status: 'Adicionado ao carrinho' });
+    const estaNoCarrinho = carrinho.some(item => item.id === evento?.id);
+
+    function handleGarantirIngresso() {
+        if (evento && !estaNoCarrinho) {
+            adicionarAoCarrinho(evento); 
         }
     }
 
     function onVoltarPress() {
-        router.replace("/home");
+        router.back(); 
     }
+
+    if (!evento) return null;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -37,180 +32,190 @@ export default function DetalhesScrenn() {
                     style={styles.botaoVoltar}
                     onPress={onVoltarPress}
                 >
-                    <Feather name="chevron-left" size={24} color="#000000" />
+                    <Feather name="chevron-left" size={24} color="#A2FF86" />
                 </TouchableOpacity>
 
-                <Text style={styles.tituloHeader}>
-                    {evento?.titulo}
+                <Text style={styles.tituloHeader} numberOfLines={1}>
+                    {evento.titulo}
                 </Text>
             </View>
 
-            <View style={styles.body}>
-                <Image source={{ uri: evento?.imagem }} style={styles.imagem} />
+            <ScrollView contentContainerStyle={styles.body}>
+                <Image source={{ uri: evento.imagem }} style={styles.imagem} />
 
-                <Text style={styles.tituloBody}>
-                    {evento?.titulo}
-                </Text>
-
-                <View style={styles.infoContainer}>
-                    <View style={styles.infoItem}>
-                        <View style={styles.infoIcon}>
-                            <FontAwesome name="calendar" size={20} color="#2b6638" />
-                        </View>
-
-                        <View style={styles.infoText}>
-                            <Text style={{
-                                fontSize: 12,
-                                fontWeight: "700",
-                                color: "#6d6d6d",
-
-                            }}>
-                                Data e Hora
-                            </Text>
-                            <Text>
-                                {evento?.data}
-                            </Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.infoItem}>
-                        <View style={styles.infoIcon}>
-                            <FontAwesome name="map-marker" size={20} color="#2b6638" />
-                        </View>
-
-                        <View style={styles.infoText}>
-                            <Text style={{
-                                fontSize: 12,
-                                fontWeight: "700",
-                                color: "#6d6d6d",
-
-                            }}>
-                                Local
-                            </Text>
-                            <Text>
-                                {evento?.local}
-                            </Text>
-                        </View>
-
-                    </View>
-
-
-                </View>
-
-                <View style={styles.sobreContainer}>
-                    <Text style={{
-                        fontSize: 18,
-                        fontWeight: "bold",
-                        marginBottom: 10,
-                    }}
-                    
-                    >Sobre o evento</Text>
-
-                    <Text>
-                        {evento?.descricao}
-                        
+                <View style={styles.contentPadding}>
+                    <Text style={styles.tituloBody}>
+                        {evento.titulo}
                     </Text>
-                </View>
 
-            </View>
+                    <View style={styles.infoContainer}>
+                        <View style={styles.infoItem}>
+                            <View style={styles.infoIcon}>
+                                <FontAwesome name="calendar" size={18} color="#A2FF86" />
+                            </View>
+
+                            <View style={styles.infoText}>
+                                <Text style={styles.labelInfo}>Data e Hora</Text>
+                                <Text style={styles.valueInfo}>{evento.data}</Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.infoItem}>
+                            <View style={styles.infoIcon}>
+                                <FontAwesome name="map-marker" size={20} color="#A2FF86" />
+                            </View>
+
+                            <View style={styles.infoText}>
+                                <Text style={styles.labelInfo}>Localização</Text>
+                                <Text style={styles.valueInfo}>{evento.local}</Text>
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={styles.sobreContainer}>
+                        <Text style={styles.tituloSobre}>Sobre o evento</Text>
+                        <Text style={styles.descricaoTexto}>
+                            {evento.descricao}
+                        </Text>
+                    </View>
+                </View>
+            </ScrollView>
 
             <View style={styles.footer}>
                 <TouchableOpacity 
-                    style={[styles.botaoComprar, 
-                            { backgroundColor: evento?.status === 'comprado' ? '#8e8e93' : '#aaff5a' }]}
-                    onPress={garantirIngresso}   
-                    disabled={evento?.status === 'comprado'} 
+                    style={[
+                        styles.botaoComprar, 
+                        estaNoCarrinho && { backgroundColor: "#FFD600" }
+                    ]}
+                    onPress={handleGarantirIngresso}
+                    disabled={estaNoCarrinho}
                 >
                     <Text style={styles.textBtnComprar}>
-                        {evento?.status === 'comprado' ? 'Ingresso Comprado' : evento?.status === 'noCarrinho' ? 'Adicionado ao Carrinho' : 'Comprar Ingresso'}
+                        {estaNoCarrinho ? "ESTÁ NO CARRINHO" : "GARANTIR INGRESSO"}
                     </Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
     );
-
-
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#F5F7FA",
+    container: { 
+        flex: 1, 
+        backgroundColor: "#0F111A" 
     },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 20,
-        width: "100%",
-        backgroundColor: "#fff",
-        shadowColor: "#000",
+    header: { 
+        flexDirection: "row", 
+        alignItems: "center", 
+        padding: 20, 
+        backgroundColor: "#1A1C26", 
+        borderBottomWidth: 1,
+        borderBottomColor: "#333"
     },
-    tituloHeader: {
-        fontSize: 18,
-        fontWeight: "bold",
+    tituloHeader: { 
+        fontSize: 18, 
+        fontWeight: "bold", 
         marginLeft: 10,
+        color: "#FFF",
+        flex: 1
     },
-    botaoVoltar: {
-        padding: 10,
-        borderRadius: 5,
+    botaoVoltar: { 
+        padding: 5, 
+        borderRadius: 5 
     },
-    imagem: {
+    imagem: { 
+        width: "100%", 
+        height: 250 
+    },
+    body: { 
+        alignItems: "center", 
+        paddingBottom: 30 
+    },
+    contentPadding: {
         width: "100%",
-        height: 300,
+        paddingHorizontal: 20
     },
-    body: {
-        alignItems: "center",
+    tituloBody: { 
+        fontSize: 26, 
+        fontWeight: "bold", 
+        color: "#A2FF86", 
+        marginTop: 20,
+        marginBottom: 10
     },
-    tituloBody: {
-        fontSize: 24,
-        fontWeight: "bold",
+    infoContainer: { 
+        backgroundColor: "#1A1C26", 
+        borderRadius: 15, 
+        width: "100%", 
+        padding: 20,
         marginVertical: 15,
-        marginLeft: 20,
-    },
-    infoContainer: {
-        backgroundColor: "#dfdfdf",
-        borderRadius: 20,
-        width: "90%",
         borderWidth: 1,
-        borderColor: "#a7a7a7",
-        padding: 15,
+        borderColor: "#333"
     },
-    infoItem: {
-        flexDirection: "row",
-        marginTop: 10,
+    infoItem: { 
+        flexDirection: "row", 
+        marginVertical: 8,
+        alignItems: "center"
     },
-    infoIcon: {
-        backgroundColor: "#65ff876e",
-        alignItems: "center",
-        justifyContent: "center",
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        marginRight: 15,
+    infoIcon: { 
+        backgroundColor: "rgba(162, 255, 134, 0.1)", 
+        alignItems: "center", 
+        justifyContent: "center", 
+        width: 40, 
+        height: 40, 
+        borderRadius: 10, 
+        marginRight: 15 
     },
     infoText: {
-
+        flex: 1
     },
-    footer: {
-        paddingTop: 20,
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "center",
+    labelInfo: {
+        fontSize: 11,
+        fontWeight: "700",
+        color: "#666",
+        textTransform: "uppercase"
     },
-    botaoComprar: {
-        backgroundColor: "#aaff5a",
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        borderRadius: 25,
-        alignItems: "center",
+    valueInfo: {
+        fontSize: 14,
+        color: "#FFF",
+        marginTop: 2
     },
-    textBtnComprar: {
-        color: "#111111",
-        fontSize: 19,
+    sobreContainer: { 
+        width: "100%", 
+        marginTop: 10 
+    },
+    tituloSobre: {
+        fontSize: 18,
         fontWeight: "bold",
+        color: "#FFF",
+        marginBottom: 10
     },
-    sobreContainer: {
-        width: "90%",
-        marginTop: 20,
+    descricaoTexto: {
+        fontSize: 15,
+        color: "#A0A0A0",
+        lineHeight: 24,
+        textAlign: "justify"
     },
-})
+    footer: { 
+        padding: 20, 
+        backgroundColor: "#1A1C26",
+        borderTopWidth: 1,
+        borderTopColor: "#333"
+    },
+    botaoComprar: { 
+        paddingVertical: 18,
+        borderRadius: 12, 
+        alignItems: "center",
+        backgroundColor: "#A2FF86",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 8
+    },
+    textBtnComprar: { 
+        fontSize: 16, 
+        fontWeight: "900",
+        letterSpacing: 1,
+        color: "#000"
+    },
+});
