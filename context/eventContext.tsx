@@ -33,7 +33,7 @@ export function EventosProvider({ children }: { children: ReactNode }) {
     function removerDoCarrinho(instanceId: number) {
         setCarrinho(carrinho.filter(item => item.instanceId !== instanceId));
     }
-
+    //dif
     function finalizarCompra() {
         setBilhetes([...bilhetes, ...carrinho]);
         setCarrinho([]);
